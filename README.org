@@ -1,0 +1,55 @@
+#+TITLE: =proj-persp-extras=
+#+AUTHOR: Brandon T. Willard
+
+[[Testing Workflow][file:https://github.com/brandonwillard/proj-persp-extras/workflows/Testing%20Workflow/badge.svg]]
+
+* Features
+
+  Currently, this package provides the minor modes =proj-persp-extras-mode= and
+  =proj-persp-tracking-mode=.
+
+  The former mode activates the latter mode, along with an adjusted version of
+  =projectile-switch-project-by-name= that doesn't pre-load dir-locals files
+  when called.
+
+  The =proj-persp-tracking-mode= minor mode creates a nearly one-to-one
+  correspondence between =projectile= projects and =persp-mode= perspectives.
+  This means that =projectile= commands will always use the project associated
+  with the current perspective, instead of--for example--the project associated
+  with the current buffer or directory.
+
+  More specifically, it wraps the functions =projectile-project-name= and
+  =projectile-project-root= and makes them return their perspective-specific
+  values.
+
+  Currently, the perspective names must correspond to a full projectile root
+  directory (e.g. obtained using =file-name-as-directory= and =expand-file-name=).
+
+
+* Usage
+
+  Just enable the minor mode:
+  #+BEGIN_SRC elisp :eval never :exports code :results none
+  (proj-persp-extras-mode +1)
+  #+END_SRC
+
+* Installation
+
+  Use your favorite approach to installing Emacs packages from GitHub.
+
+  Here's an example of one:
+  #+BEGIN_SRC elisp :eval never :exports code :results none
+  (quelpa
+  '(proj-persp-extras
+    :fetcher git
+    :url "https://github.com/brandonwillard/proj-persp-extras.git"))
+  #+END_SRC
+
+
+* Development
+  To use as a Cask dependency:
+  #+BEGIN_SRC elisp :eval never :exports code :results none
+  (depends-on "proj-persp-extras"
+              :git "https://github.com/brandonwillard/proj-persp-extras.git"
+              :branch "master")
+  #+END_SRC
