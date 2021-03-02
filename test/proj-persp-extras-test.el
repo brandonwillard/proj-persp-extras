@@ -68,48 +68,54 @@ Taken from `projectile's `projectile-test.el'.
 ;;; Tests
 
 (ert-deftest test-switch-persp ()
-    (persp-test-with
-     (projectile-test-with-sandbox
-      (projectile-test-with-files
-       ("project-1/"
-        "project-1/.projectile"
-        "project-1/file-1"
-        "project-2/"
-        "project-2/.projectile"
-        "project-2/file-2")
+  (persp-test-with
+   (projectile-test-with-sandbox
+    (projectile-test-with-files
+     ("project-1/"
+      "project-1/.projectile"
+      "project-1/file-1"
+      "project-2/"
+      "project-2/.projectile"
+      "project-2/file-2")
 
-       (let ((project-1-dir (file-name-as-directory (expand-file-name "project-1")))
-             (project-2-dir (file-name-as-directory (expand-file-name "project-2"))))
+     (let ((project-1-dir (file-name-as-directory (expand-file-name "project-1")))
+           (project-2-dir (file-name-as-directory (expand-file-name "project-2"))))
 
-         (projectile-add-known-project project-1-dir)
-         (projectile-add-known-project project-2-dir)
+       (projectile-add-known-project project-1-dir)
+       (projectile-add-known-project project-2-dir)
 
-         ;; Switch to the first project
-         (cd "project-1")
+       ;; Switch to the first project
+       (cd "project-1")
 
-         (should (equal (projectile-project-name) "project-1"))
-         (should (equal (projectile-project-root) project-1-dir))
+       (should (equal (projectile-project-name) "project-1"))
+       (should (equal (projectile-project-root) project-1-dir))
 
-         ;; This will create a perspective and associate it with project-1
-         (persp-switch project-1-dir)
+       ;; This will create a perspective and associate it with project-1
+       (persp-switch project-1-dir)
 
-         ;; Switch to the second project
-         (cd "../project-2")
+       (should (equal project-1-dir (alist-get 'projectile-project-root (safe-persp-parameters (get-current-persp)))))
 
-         ;; This will create a second perspective and associate it with project-2
-         (persp-switch project-2-dir)
+       ;; Switch to the second project
+       (cd "../project-2")
 
-         (should (equal (safe-persp-name (get-frame-persp)) project-2-dir))
-         (should (equal (projectile-project-name) "project-2"))
-         (should (equal (projectile-project-root) project-2-dir))
+       ;; This will create a second perspective and associate it with project-2
+       (persp-switch project-2-dir)
 
-         ;; Switch back to the first perspective while we're still in project-2
-         (persp-switch  project-1-dir)
+       (should (equal project-2-dir (alist-get 'projectile-project-root (safe-persp-parameters (get-current-persp)))))
 
-         (should (equal (safe-persp-name (get-frame-persp)) project-1-dir))
+       (should (equal (safe-persp-name (get-frame-persp)) project-2-dir))
+       (should (equal (projectile-project-name) "project-2"))
+       (should (equal (projectile-project-root) project-2-dir))
 
-         ;; Projectile should report that we're in project-1 now
-         (should (equal (projectile-project-name) "project-1"))
-         (should (equal (projectile-project-root) project-1-dir)))))))
+       ;; Switch back to the first perspective while we're still in project-2
+       (persp-switch  project-1-dir)
+
+       (should (equal project-1-dir (alist-get 'projectile-project-root (safe-persp-parameters (get-current-persp)))))
+
+       (should (equal (safe-persp-name (get-frame-persp)) project-1-dir))
+
+       ;; Projectile should report that we're in project-1 now
+       (should (equal (projectile-project-name) "project-1"))
+       (should (equal (projectile-project-root) project-1-dir)))))))
 
 ;;; proj-persp-extras-test.el ends here
